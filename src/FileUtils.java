@@ -13,7 +13,6 @@ public class FileUtils {
             Scanner fileReader = new Scanner(inputFile);
             while (fileReader.hasNextLine()){
                 int data = fileReader.nextInt();
-                System.out.println(data);
                 intArray.add(data);
             }
 
