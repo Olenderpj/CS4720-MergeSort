@@ -36,3 +36,24 @@ public class MergeSort {
         return numberOfInversions;
     }
 }
+
+
+/**
+ * Method: merge split
+ *  - set themidpoint (check if odd length array)
+ *  - populate the array
+ *  - init a result array
+ *  - if the array's length is greater than 1 then we recursivley call the merge sort function on left and right
+ *
+ *
+ * Method: Merge arrays;
+ * - init a new array that is the length of the left and right combined arrays
+ * - initialize pointers to 0
+ * - while elements exist in both the left and the right array, find the lowest value in the two arrays and then add it to the result array and increment the result pointer.
+ * - else, find elements only in the left or the right array and add them to the result array
+ *
+ *!!! increment pointer values when they are used.
+ *
+ *
+ *
+ */
