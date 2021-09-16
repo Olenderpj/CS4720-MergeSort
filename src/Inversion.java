@@ -1,92 +1,95 @@
-import java.math.BigInteger;
 import java.util.Arrays;
 
 public class Inversion {
 
-    public static BigInteger inversionCount = BigInteger.ZERO;
+    public static long mergeSortInversionCount = 0;
+    public static long bruteForceInversionCount = 0;
     public static int[] sortedArray;
 
-    public int[] mergeSort(final int[] array) {
-        // Validate that the array can be sorted.
-        if (array.length <= 1){
-            return array;
-        }
-        int middle = array.length / 2;
-        int[] leftArray  = Arrays.copyOfRange(array, 0, middle);
-        int[] rightArray = Arrays.copyOfRange(array, middle, array.length);
-        int[] result;
-
-        leftArray = mergeSort(leftArray);
-        rightArray = mergeSort(rightArray);
-
-        result = merge(leftArray, rightArray);
-        sortedArray = result;
-        return result;
+    // constructor calculates inversions with both the brute force and the merge sort method
+    public Inversion(int[] array){
+        bruteForceInversionCount(array);
+        mergeSortAndCount(array, 0, array.length - 1);
     }
 
-    private static int[] merge(final int[] leftArray, final int[] rightArray) {
+    private int mergeAndCount(int[] array, int left, int middle, int right){
         int leftPointer = 0;
         int rightPointer = 0;
-        int mergePointer = 0;
-        int mergedArrayLength = leftArray.length + rightArray.length;
-        int[] mergedArray = new int[mergedArrayLength];
+        int originalArrayPointer = left;
+        int inversions = 0;
 
-        // Elements exist in left or right array
-        while (leftPointer < leftArray.length || rightPointer < rightArray.length){
+        // Left subarray
+        int[] leftArray = Arrays.copyOfRange(array, left, middle + 1);
+        // Right subarray
+        int[] rightArray = Arrays.copyOfRange(array, middle + 1, right + 1);
 
-            // Both Left and right have elements in their array
-            if (leftPointer < leftArray.length && rightPointer < rightArray.length){
 
-                // compare left element to right element
-                if (leftArray[leftPointer] < rightArray[rightPointer]){
-                    mergedArray[mergePointer++] = leftArray[leftPointer++];
-                    inversionCount = inversionCount.add(BigInteger.ONE);
-
-                } else {
-                    mergedArray[mergePointer++] = rightArray[rightPointer++];
-                    inversionCount = inversionCount.add(BigInteger.ONE);
-
-                }
-
-            // only elements in left array
-            } else if (leftPointer < leftArray.length){
-                mergedArray[mergePointer++] = leftArray[leftPointer++];
-                inversionCount = inversionCount.add(BigInteger.ONE);
-
-            // only elements in the right array
-            } else {
-                mergedArray[mergePointer++] = rightArray[rightPointer++];
-                inversionCount = inversionCount.add(BigInteger.ONE);
+        while (leftPointer < leftArray.length && rightPointer < rightArray.length) {
+            if (leftArray[leftPointer] <= rightArray[rightPointer])
+                array[originalArrayPointer++] = leftArray[leftPointer++];
+            else {
+                array[originalArrayPointer++] = rightArray[rightPointer++];
+                inversions += (middle + 1) - (left + leftPointer);
             }
         }
-        return mergedArray;
+
+        // add any leftover elements from the left and right arrays to the original array.
+        while (leftPointer < leftArray.length)
+            array[originalArrayPointer++] = leftArray[leftPointer++];
+        while (rightPointer < rightArray.length)
+            array[originalArrayPointer++] = rightArray[rightPointer++];
+
+        sortedArray = array;
+        return inversions;
+    }
+
+    // merge the left and right sorted arrays
+    private long mergeSortAndCount(int[] array, int left, int right){
+        long count = 0;
+
+        if (left < right){
+            int middle = (left + right) / 2;
+
+            // left sub-array count
+            count += mergeSortAndCount(array, left, middle);
+            // right sub-array count
+            count += mergeSortAndCount(array, middle + 1, right);
+            // number of merges
+            count += mergeAndCount(array, left, middle, right);
+        }
+        mergeSortInversionCount = count;
+        return count;
     }
 
     public void bruteForceInversionCount(int[] array){
-
         for (int i = 0; i < array.length - 1; i++){
             for (int n = i + 1; n < array.length; n++){
                 if (array[i] > array[n]){
-                    inversionCount = inversionCount.add(BigInteger.valueOf(1));
+                    bruteForceInversionCount += 1;
                 }
             }
         }
-        System.out.println("Brute Force number of Inversions: " + inversionCount);
     }
 
-    public void printIntArray(int[] array){
-        for (int i: array){
-            System.out.println(i);
+
+    public void printIntegerArray(int[] array){
+        for (int value: array){
+            System.out.print(value + " ");
         }
-        System.out.println("Inversions: "+ inversionCount);
+
     }
 
+    public long getMergeSortInversionCount() {
+        return mergeSortInversionCount;
+    }
 
-    public BigInteger getInversionCount() {
-        return inversionCount;
+    public long getBruteForceInversionCount() {
+        return bruteForceInversionCount;
     }
 
     public int[] getSortedArray() {
         return sortedArray;
     }
+
+
 }
